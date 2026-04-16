@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>우리 가족 앨범 🍼❤️</title>
+<meta name="theme-color" content="#FF8FAB">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="가족 앨범">
+<link rel="apple-touch-icon" id="pwa-icon">
+<link rel="manifest" id="pwa-manifest">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --rose:#FF8FAB;--rose-lt:#FFD6E0;--rose-dk:#e6607a;
+  --peach:#FF9F7F;--peach-lt:#FFE0D6;
+  --cream:#FFF8F0;--warm:#FFF0F3;--text:#4A3540;--muted:#B89FA8;--white:#fff;
+  --shadow:0 8px 32px rgba(255,143,171,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;padding-bottom:80px}
+
+/* HEADER */
+.app-header{background:var(--white);padding:14px 18px 0;box-shadow:0 2px 16px rgba(255,143,171,.1);position:sticky;top:0;z-index:100}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.hdr-left{display:flex;align-items:center;gap:10px}
+.hdr-icon{font-size:30px;line-height:1}
+.hdr-title{font-family:'Nunito',sans-serif;font-size:20px;font-weight:900;color:var(--rose)}
+.hdr-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.hdr-actions{display:flex;gap:4px}
+.hdr-btn{width:38px;height:38px;background:var(--warm);border:none;border-radius:12px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.hdr-btn:active{transform:scale(.92);background:var(--rose-lt)}
+
+/* ALBUM TABS */
+.album-tabs{display:flex;gap:0;border-top:1px solid #f5e5ea}
+.album-tab{flex:1;padding:10px 8px;border:none;background:none;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px}
+.album-tab.active{color:var(--rose);border-bottom-color:var(--rose)}
+.album-tab:first-child.active{color:var(--rose)}
+.album-tab:last-child.active{color:var(--peach);border-bottom-color:var(--peach)}
+
+/* UPLOAD */
+.upload-zone{margin:14px 16px 0;background:var(--white);border-radius:20px;padding:16px;box-shadow:var(--shadow)}
+.upload-zone-title{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
+.upload-btns{display:flex;gap:10px}
+.upload-btn{flex:1;padding:12px 8px;border:2px dashed var(--rose-lt);border-radius:16px;background:var(--warm);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;color:var(--rose);transition:all .18s}
+.upload-btn:active{background:var(--rose-lt);transform:scale(.97)}
+.upload-btn.peach{border-color:var(--peach-lt);color:var(--peach);background:#fff8f5}
+.upload-btn.peach:active{background:var(--peach-lt)}
+.uicon{font-size:24px}
+.progress-wrap{margin-top:12px;display:none}
+.progress-track{height:8px;background:var(--rose-lt);border-radius:8px;overflow:hidden;margin-bottom:6px}
+.progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--rose),#ff6b94);border-radius:8px;transition:width .25s}
+.progress-label{font-size:12px;color:var(--muted);text-align:center}
+
+/* GALLERY */
+.gallery-hdr{padding:14px 20px 8px;display:flex;align-items:center;justify-content:space-between}
+.gallery-hdr-title{font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;color:var(--text)}
+.count-pill{font-size:12px;font-weight:700;padding:3px 12px;border-radius:20px;font-family:'Nunito',sans-serif}
+.count-pill.rose{background:var(--rose-lt);color:var(--rose)}
+.count-pill.peach{background:var(--peach-lt);color:var(--peach)}
+
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:0 16px}
+.grid-item{aspect-ratio:1;border-radius:12px;overflow:hidden;cursor:pointer;position:relative;background:var(--rose-lt);transition:transform .15s}
+.grid-item:active{transform:scale(.96)}
+.grid-item img,.grid-item video{width:100%;height:100%;object-fit:cover;display:block}
+.vid-tag{position:absolute;bottom:5px;right:5px;background:rgba(0,0,0,.55);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:7px;font-family:'Nunito',sans-serif}
+.like-badge{position:absolute;bottom:5px;left:5px;background:rgba(255,255,255,.85);color:var(--rose);font-size:10px;font-weight:800;padding:2px 6px;border-radius:7px;font-family:'Nunito',sans-serif;backdrop-filter:blur(4px);display:none}
+.like-badge.show{display:flex;align-items:center;gap:2px}
+
+.skeleton-item{aspect-ratio:1;border-radius:12px;background:linear-gradient(90deg,var(--rose-lt) 25%,#ffc8d8 50%,var(--rose-lt) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite}
+@keyframes shimmer{to{background-position:-200% 0}}
+.empty-state{grid-column:1/-1;text-align:center;padding:40px 20px;color:var(--muted)}
+.empty-state .ei{font-size:50px;margin-bottom:10px}
+.empty-state h3{font-family:'Nunito',sans-serif;font-size:17px;font-weight:800;margin-bottom:5px;color:var(--rose)}
+.empty-state p{font-size:13px;line-height:1.6}
+
+/* LIGHTBOX */
+#lightbox{display:none;position:fixed;inset:0;background:rgba(15,8,12,.97);z-index:9999;flex-direction:column;overflow:hidden}
+#lightbox.on{display:flex}
+.lb-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;flex-shrink:0}
+.lb-counter{color:rgba(255,255,255,.6);font-size:13px;font-family:'Nunito',sans-serif;font-weight:700}
+.lb-header-actions{display:flex;gap:8px}
+.lb-action-btn{background:rgba(255,255,255,.12);border:none;color:#fff;width:40px;height:40px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);transition:background .2s}
+.lb-action-btn:active{background:rgba(255,143,171,.4)}
+
+.lb-media-wrap{flex:1;display:flex;align-items:center;justify-content:center;position:relative;min-height:0}
+#lb-img,#lb-vid{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px}
+.lb-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.12);border:none;color:#fff;width:40px;height:60px;font-size:20px;cursor:pointer;display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px);border-radius:10px}
+#lb-prev{left:8px}#lb-next{right:8px}
+
+/* BOTTOM PANEL */
+.lb-bottom{background:rgba(30,15,22,.95);border-radius:24px 24px 0 0;padding:16px 18px;flex-shrink:0;max-height:45vh;overflow-y:auto}
+.lb-like-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.08)}
+.like-btn{background:rgba(255,143,171,.15);border:1.5px solid rgba(255,143,171,.3);color:var(--rose);padding:8px 18px;border-radius:20px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s}
+.like-btn.liked{background:var(--rose);color:white;border-color:var(--rose)}
+.like-btn:active{transform:scale(.95)}
+.like-count{color:rgba(255,255,255,.5);font-size:13px;font-family:'Nunito',sans-serif}
+
+.comments-title{color:rgba(255,255,255,.7);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;font-family:'Nunito',sans-serif}
+.comment-list{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.comment-item{background:rgba(255,255,255,.06);border-radius:12px;padding:10px 12px}
+.comment-name{font-size:11px;font-weight:700;color:var(--rose);margin-bottom:3px;font-family:'Nunito',sans-serif}
+.comment-text{font-size:13px;color:rgba(255,255,255,.85);line-height:1.5}
+.comment-time{font-size:10px;color:rgba(255,255,255,.35);margin-top:3px}
+.no-comments{font-size:13px;color:rgba(255,255,255,.3);text-align:center;padding:10px 0;font-style:italic}
+
+.comment-input-row{display:flex;gap:8px;align-items:flex-end}
+.comment-input-wrap{flex:1}
+.comment-name-input,.comment-text-input{width:100%;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.12);border-radius:10px;color:white;font-family:'Noto Sans KR',sans-serif;font-size:13px;padding:8px 12px;outline:none;transition:border-color .2s}
+.comment-name-input{margin-bottom:6px;font-size:12px}
+.comment-name-input::placeholder,.comment-text-input::placeholder{color:rgba(255,255,255,.3)}
+.comment-name-input:focus,.comment-text-input:focus{border-color:var(--rose)}
+.comment-send-btn{background:var(--rose);border:none;color:white;width:42px;height:42px;border-radius:12px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .15s}
+.comment-send-btn:active{transform:scale(.92)}
+
+/* TOAST */
+#toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--text);color:#fff;padding:12px 24px;border-radius:30px;font-size:14px;font-family:'Nunito',sans-serif;font-weight:700;white-space:nowrap;z-index:99999;transition:transform .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 8px 24px rgba(0,0,0,.25)}
+#toast.show{transform:translateX(-50%) translateY(0)}
+input[type="file"]{display:none}
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="hdr-top">
+    <div class="hdr-left">
+      <span class="hdr-icon">📸</span>
+      <div>
+        <div class="hdr-title">우리 가족 앨범</div>
+        <div class="hdr-sub" id="hdr-sub">불러오는 중...</div>
+      </div>
+    </div>
+    <div class="hdr-actions">
+      <button class="hdr-btn" onclick="copyShareLink()">📤</button>
+    </div>
+  </div>
+  <div class="album-tabs">
+    <button class="album-tab active" id="tab-seoani" onclick="switchAlbum('seoani')">🍼 서안이</button>
+    <button class="album-tab" id="tab-family" onclick="switchAlbum('family')">❤️ 아빠엄마랑</button>
+  </div>
+</div>
+
+<div id="upload-zone" class="upload-zone">
+  <div class="upload-zone-title" id="upload-title">🍼 서안이 사진 추가</div>
+  <div class="upload-btns">
+    <label class="upload-btn" id="cam-btn" for="cam-input"><span class="uicon">📸</span>카메라</label>
+    <label class="upload-btn" id="file-btn" for="file-input"><span class="uicon">🖼️</span>갤러리</label>
+  </div>
+  <div class="progress-wrap" id="prog-wrap">
+    <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
+    <div class="progress-label" id="prog-label">업로드 중...</div>
+  </div>
+</div>
+
+<input type="file" id="cam-input" accept="image/*,video/*" capture="environment">
+<input type="file" id="file-input" accept="image/*,video/*" multiple>
+
+<div class="gallery-hdr">
+  <div class="gallery-hdr-title" id="gallery-title">🍼 서안이 사진</div>
+  <div class="count-pill rose" id="count-pill">0장</div>
+</div>
+<div class="gallery-grid" id="gallery">
+  <div class="skeleton-item"></div><div class="skeleton-item"></div><div class="skeleton-item"></div>
+  <div class="skeleton-item"></div><div class="skeleton-item"></div><div class="skeleton-item"></div>
+</div>
+
+<!-- LIGHTBOX -->
+<div id="lightbox">
+  <div class="lb-header">
+    <div class="lb-counter" id="lb-counter">1 / 1</div>
+    <div class="lb-header-actions">
+      <button class="lb-action-btn" onclick="downloadPhoto()" title="다운로드">⬇️</button>
+      <button class="lb-action-btn" onclick="closeLb()">✕</button>
+    </div>
+  </div>
+  <div class="lb-media-wrap">
+    <button class="lb-nav" id="lb-prev" onclick="lbNav(-1)">‹</button>
+    <img id="lb-img" style="display:none">
+    <video id="lb-vid" controls style="display:none"></video>
+    <button class="lb-nav" id="lb-next" onclick="lbNav(1)">›</button>
+  </div>
+  <div class="lb-bottom">
+    <div class="lb-like-row">
+      <button class="like-btn" id="like-btn" onclick="toggleLike()">🤍 좋아요</button>
+      <span class="like-count" id="like-count"></span>
+    </div>
+    <div class="comments-title">💬 댓글</div>
+    <div class="comment-list" id="comment-list"></div>
+    <div class="comment-input-row">
+      <div class="comment-input-wrap">
+        <input class="comment-name-input" id="comment-name" placeholder="이름 (예: 엄마, 할머니)" maxlength="10">
+        <input class="comment-text-input" id="comment-text" placeholder="댓글을 입력하세요 💕" maxlength="100">
+      </div>
+      <button class="comment-send-btn" onclick="submitComment()">➤</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+'use strict';
+const CFG = {
+  apiKey: "AIzaSyBRTPTQMx4V75O1pw72Tccii5J1SScrzEQ",
+  authDomain: "seani-album.firebaseapp.com",
+  projectId: "seani-album",
+  storageBucket: "seani-album.firebasestorage.app",
+  messagingSenderId: "1089100628714",
+  appId: "1:1089100628714:web:ed097061692e3b07328d93"
+};
+
+let storage, db;
+let currentAlbum = 'seoani';
+let items = [], lbIdx = 0;
+let likedPhotos = JSON.parse(localStorage.getItem('liked')||'{}');
+
+const ALBUMS = {
+  seoani: { label:'🍼 서안이 사진', tab:'tab-seoani', color:'rose', emoji:'🍼', btnClass:'' },
+  family: { label:'❤️ 아빠엄마랑',  tab:'tab-family',  color:'peach', emoji:'❤️', btnClass:'peach' }
+};
+
+/* ── ALBUM SWITCH ── */
+function switchAlbum(album) {
+  currentAlbum = album;
+  const a = ALBUMS[album];
+  document.getElementById('tab-seoani').classList.toggle('active', album==='seoani');
+  document.getElementById('tab-family').classList.toggle('active', album==='family');
+  document.getElementById('upload-title').textContent = `${a.emoji} ${a.label} 추가`;
+  document.getElementById('gallery-title').textContent = a.label;
+  const pill = document.getElementById('count-pill');
+  pill.className = `count-pill ${a.color}`;
+  const camBtn = document.getElementById('cam-btn');
+  const fileBtn = document.getElementById('file-btn');
+  camBtn.className = `upload-btn ${a.btnClass}`;
+  fileBtn.className = `upload-btn ${a.btnClass}`;
+  loadPhotos();
+}
+
+/* ── UPLOAD ── */
+async function handleFiles(e) {
+  const files = Array.from(e.target.files);
+  if (!files.length) return;
+  const wrap=document.getElementById('prog-wrap'), fill=document.getElementById('prog-fill'), label=document.getElementById('prog-label');
+  wrap.style.display = 'block';
+  for (let i=0; i<files.length; i++) {
+    const file = files[i];
+    const isVideo = file.type.startsWith('video/');
+    const ext = file.name.split('.').pop() || (isVideo?'mp4':'jpg');
+    const path = `${currentAlbum}/${Date.now()}_${isVideo?'v':'i'}_${Math.random().toString(36).slice(2,6)}.${ext}`;
+    label.textContent = `업로드 중... (${i+1}/${files.length})`;
+    fill.style.width = '0%';
+    try {
+      const ref = storage.ref(path);
+      const task = ref.put(file);
+      await new Promise((res,rej) => { task.on('state_changed', s=>{ fill.style.width=((s.bytesTransferred/s.totalBytes)*100)+'%'; }, rej, res); });
+    } catch(err) { toast('❌ 업로드 실패: '+err.message); }
+  }
+  wrap.style.display='none'; fill.style.width='0%'; e.target.value='';
+  toast('✅ 업로드 완료! 💕');
+  loadPhotos();
+}
+
+/* ── GALLERY ── */
+async function loadPhotos() {
+  const grid = document.getElementById('gallery');
+  grid.innerHTML = '<div class="skeleton-item"></div>'.repeat(6);
+  items = [];
+  try {
+    const result = await storage.ref(currentAlbum).listAll();
+    const refs = result.items.sort((a,b) => b.name.localeCompare(a.name));
+    if (!refs.length) { render(); return; }
+    grid.innerHTML = '';
+    await Promise.all(refs.map(async ref => {
+      try {
+        const url = await ref.getDownloadURL();
+        const isVideo = ref.name.includes('_v_');
+        items.push({ name: ref.name, url, type: isVideo?'video':'image', path: `${currentAlbum}/${ref.name}` });
+        items.sort((a,b) => b.name.localeCompare(a.name));
+        renderGrid();
+        document.getElementById('count-pill').textContent = `${items.length}장`;
+        document.getElementById('hdr-sub').textContent = `사진 ${items.length}장`;
+      } catch(e2) { console.warn(e2); }
+    }));
+  } catch(e) {
+    grid.innerHTML = `<div class="empty-state"><div class="ei">⚠️</div><h3>오류</h3><p>${e.message}</p></div>`;
+  }
+}
+function renderGrid() {
+  document.getElementById('gallery').innerHTML = items.map((it,i) => {
+    const liked = likedPhotos[it.name];
+    return `<div class="grid-item" onclick="openLb(${i})">
+      ${it.type==='video'
+        ? `<video src="${it.url}" preload="metadata" muted playsinline></video><div class="vid-tag">▶ 영상</div>`
+        : `<img src="${it.url}" loading="lazy" decoding="async" alt="사진">`}
+      <div class="like-badge ${liked?'show':''}" id="badge-${i}">❤️</div>
+    </div>`;
+  }).join('');
+}
+
+function render() {
+  const grid = document.getElementById('gallery');
+  const pill = document.getElementById('count-pill');
+  const sub  = document.getElementById('hdr-sub');
+  pill.textContent = `${items.length}장`;
+  sub.textContent = `사진 ${items.length}장`;
+  if (!items.length) {
+    const a = ALBUMS[currentAlbum];
+    grid.innerHTML = `<div class="empty-state"><div class="ei">${a.emoji}</div><h3>아직 사진이 없어요</h3><p>위에서 사진을 추가해보세요!</p></div>`;
+    return;
+  }
+  grid.innerHTML = items.map((it,i) => {
+    const liked = likedPhotos[it.name];
+    return `<div class="grid-item" onclick="openLb(${i})">
+      ${it.type==='video'
+        ? `<video src="${it.url}" preload="metadata" muted playsinline></video><div class="vid-tag">▶ 영상</div>`
+        : `<img src="${it.url}" loading="lazy" alt="사진">`}
+      <div class="like-badge ${liked?'show':''}" id="badge-${i}">❤️</div>
+    </div>`;
+  }).join('');
+}
+
+/* ── LIGHTBOX ── */
+function openLb(idx) { lbIdx=idx; updateLb(); document.getElementById('lightbox').classList.add('on'); }
+function closeLb() {
+  document.getElementById('lightbox').classList.remove('on');
+  const v=document.getElementById('lb-vid'); v.pause(); v.src='';
+}
+function lbNav(dir) { lbIdx=(lbIdx+dir+items.length)%items.length; updateLb(); }
+
+async function updateLb() {
+  const it = items[lbIdx];
+  const img=document.getElementById('lb-img'), vid=document.getElementById('lb-vid');
+  if (it.type==='video') { img.style.display='none'; vid.style.display='block'; vid.src=it.url; }
+  else { vid.style.display='none'; vid.src=''; img.style.display='block'; img.src=it.url; }
+  document.getElementById('lb-counter').textContent = `${lbIdx+1} / ${items.length}`;
+  const show = items.length>1 ? 'flex':'none';
+  document.getElementById('lb-prev').style.display=show;
+  document.getElementById('lb-next').style.display=show;
+  loadLikesAndComments();
+}
+
+/* ── LIKES ── */
+async function loadLikesAndComments() {
+  const it = items[lbIdx];
+  const key = it.name.replace(/\./g,'_');
+  const liked = !!likedPhotos[it.name];
+  const btn = document.getElementById('like-btn');
+  btn.className = `like-btn ${liked?'liked':''}`;
+  btn.textContent = liked ? '❤️ 좋아요' : '🤍 좋아요';
+
+  try {
+    const doc = await db.collection('meta').doc(key).get();
+    const data = doc.exists ? doc.data() : {};
+    const count = data.likes || 0;
+    document.getElementById('like-count').textContent = count>0 ? `${count}명이 좋아해요` : '';
+    loadComments(key);
+  } catch(e) { console.warn(e); }
+}
+
+async function toggleLike() {
+  const it = items[lbIdx];
+  const key = it.name.replace(/\./g,'_');
+  const wasLiked = !!likedPhotos[it.name];
+  likedPhotos[it.name] = !wasLiked;
+  localStorage.setItem('liked', JSON.stringify(likedPhotos));
+
+  const btn = document.getElementById('like-btn');
+  btn.className = `like-btn ${!wasLiked?'liked':''}`;
+  btn.textContent = !wasLiked ? '❤️ 좋아요' : '🤍 좋아요';
+
+  try {
+    const ref = db.collection('meta').doc(key);
+    await ref.set({ likes: firebase.firestore.FieldValue.increment(!wasLiked?1:-1) }, {merge:true});
+    const doc = await ref.get();
+    const count = (doc.data()||{}).likes || 0;
+    document.getElementById('like-count').textContent = count>0 ? `${count}명이 좋아해요` : '';
+    // 갤러리 배지 업데이트
+    const badge = document.getElementById(`badge-${lbIdx}`);
+    if (badge) { badge.className = `like-badge ${!wasLiked?'show':''}`; }
+  } catch(e) { console.warn(e); }
+}
+
+/* ── COMMENTS ── */
+async function loadComments(key) {
+  const list = document.getElementById('comment-list');
+  try {
+    const snap = await db.collection('meta').doc(key).collection('comments').orderBy('time','asc').get();
+    if (snap.empty) { list.innerHTML='<div class="no-comments">첫 댓글을 남겨보세요 💕</div>'; return; }
+    list.innerHTML = snap.docs.map(d => {
+      const c = d.data();
+      const time = c.time ? new Date(c.time.toMillis()).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '';
+      return `<div class="comment-item">
+        <div class="comment-name">${escHtml(c.name||'익명')}</div>
+        <div class="comment-text">${escHtml(c.text)}</div>
+        <div class="comment-time">${time}</div>
+      </div>`;
+    }).join('');
+  } catch(e) { list.innerHTML='<div class="no-comments">댓글을 불러올 수 없어요</div>'; }
+}
+
+async function submitComment() {
+  const name = document.getElementById('comment-name').value.trim() || '익명';
+  const text = document.getElementById('comment-text').value.trim();
+  if (!text) return toast('💬 댓글을 입력해주세요!');
+  const it = items[lbIdx];
+  const key = it.name.replace(/\./g,'_');
+  try {
+    await db.collection('meta').doc(key).collection('comments').add({
+      name, text, time: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    document.getElementById('comment-text').value = '';
+    toast('💕 댓글이 등록됐어요!');
+    loadComments(key);
+  } catch(e) { toast('❌ 댓글 등록 실패: '+e.message); }
+}
+
+/* ── DOWNLOAD ── */
+async function downloadPhoto() {
+  const it = items[lbIdx];
+  try {
+    const res = await fetch(it.url);
+    const blob = await res.blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = it.name;
+    a.click();
+    toast('⬇️ 다운로드 시작!');
+  } catch(e) {
+    window.open(it.url, '_blank');
+  }
+}
+
+/* ── SHARE ── */
+function copyShareLink() {
+  const url = location.href.split('?')[0];
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(()=>toast('📤 링크 복사! 카카오톡에 붙여넣기 하세요 💌')).catch(()=>prompt('링크:', url));
+  } else prompt('링크:', url);
+}
+
+function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
+
+document.getElementById('lightbox').addEventListener('click', e=>{ if(e.target===document.getElementById('lightbox')) closeLb(); });
+document.getElementById('comment-text').addEventListener('keydown', e=>{ if(e.key==='Enter') submitComment(); });
+
+/* ── FIREBASE LOAD ── */
+function loadScript(src){ return new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=rej; document.head.appendChild(s); }); }
+async function loadFirebaseSDK(){
+  const v='9.23.0';
+  const sets=[
+    [`https://www.gstatic.com/firebasejs/${v}/firebase-app-compat.js`,
+     `https://www.gstatic.com/firebasejs/${v}/firebase-storage-compat.js`,
+     `https://www.gstatic.com/firebasejs/${v}/firebase-firestore-compat.js`],
+    [`https://cdn.jsdelivr.net/npm/firebase@${v}/firebase-app-compat.min.js`,
+     `https://cdn.jsdelivr.net/npm/firebase@${v}/firebase-storage-compat.min.js`,
+     `https://cdn.jsdelivr.net/npm/firebase@${v}/firebase-firestore-compat.min.js`]
+  ];
+  for(const urls of sets){ try{ for(const u of urls) await loadScript(u); return true; }catch(e){ console.warn('CDN 백업',e); } }
+  return false;
+}
+
+/* ── BOOT ── */
+(async()=>{
+  if(!await loadFirebaseSDK()){ alert('⚠️ 인터넷 연결을 확인해주세요.'); return; }
+
+  // PWA 아이콘 & 매니페스트 동적 생성
+  const _iconSvg = encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="40" fill="#FF8FAB"/><text y="135" x="96" text-anchor="middle" font-size="100">🍼</text></svg>');
+  const _iconUrl = 'data:image/svg+xml,' + _iconSvg;
+  const _piEl = document.getElementById('pwa-icon');
+  if(_piEl) _piEl.href = _iconUrl;
+  try {
+    const _mf = {name:"우리 가족 앨범",short_name:"가족 앨범",start_url:"./",display:"standalone",background_color:"#FFF8F0",theme_color:"#FF8FAB",icons:[{src:_iconUrl,sizes:"192x192",type:"image/svg+xml"},{src:_iconUrl,sizes:"512x512",type:"image/svg+xml"}]};
+    const _mb = new Blob([JSON.stringify(_mf)],{type:'application/json'});
+    const _ml = document.getElementById('pwa-manifest');
+    if(_ml) _ml.href = URL.createObjectURL(_mb);
+  } catch(e){ console.warn('manifest',e); }
+  firebase.initializeApp(CFG);
+  storage = firebase.storage();
+  db = firebase.firestore();
+  document.getElementById('cam-input').addEventListener('change', handleFiles);
+  document.getElementById('file-input').addEventListener('change', handleFiles);
+  loadPhotos();
+})();
+</script>
+</body>
+</html>
