@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>서안이 앨범 🍼</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--rose:#FF8FAB;--rose-lt:#FFD6E0;--cream:#FFF8F0;--warm:#FFF0F3;--text:#4A3540;--muted:#B89FA8;--white:#fff;--shadow:0 8px 32px rgba(255,143,171,.18)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--text);min-height:100vh}
+.screen{display:none;min-height:100vh;flex-direction:column}
+.screen.on{display:flex}
+#setup{background:linear-gradient(160deg,#fff0f5,#ffd6e0);align-items:center;justify-content:flex-start;padding:48px 20px 40px}
+.setup-emoji{font-size:72px;display:block;animation:float 3s ease-in-out infinite;text-align:center;margin-bottom:10px}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-14px) rotate(3deg)}}
+.setup-title{font-family:'Nunito',sans-serif;font-size:32px;font-weight:900;color:var(--rose);text-align:center}
+.setup-sub{font-size:14px;color:var(--muted);margin:6px 0 28px;text-align:center;line-height:1.6}
+.setup-card{background:var(--white);border-radius:28px;padding:28px 24px;width:100%;max-width:440px;box-shadow:var(--shadow)}
+.card-label{font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:var(--rose);text-transform:uppercase;letter-spacing:1px;margin-bottom:18px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px}
+.field input{width:100%;padding:13px 16px;border:2px solid #f5e0e8;border-radius:14px;font-size:13px;font-family:'Noto Sans KR',sans-serif;color:var(--text);background:var(--warm);outline:none;transition:border-color .2s,box-shadow .2s}
+.field input:focus{border-color:var(--rose);box-shadow:0 0 0 3px rgba(255,143,171,.15)}
+.field input::placeholder{color:#d4b8c2}
+.btn-go{width:100%;padding:16px;margin-top:6px;background:linear-gradient(135deg,var(--rose),#ff6b94);color:#fff;border:none;border-radius:16px;font-family:'Nunito',sans-serif;font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 6px 20px rgba(255,107,148,.35);transition:transform .15s}
+.btn-go:active{transform:scale(.97)}
+.setup-hint{margin-top:18px;font-size:12px;color:var(--muted);line-height:1.7;text-align:center;padding:14px;background:#fff5f8;border-radius:14px;border:1.5px dashed var(--rose-lt)}
+.app-header{background:var(--white);padding:14px 18px 12px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 16px rgba(255,143,171,.1);position:sticky;top:0;z-index:100}
+.hdr-left{display:flex;align-items:center;gap:10px}
+.hdr-icon{font-size:32px;line-height:1}
+.hdr-title{font-family:'Nunito',sans-serif;font-size:20px;font-weight:900;color:var(--rose)}
+.hdr-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.hdr-actions{display:flex;gap:4px}
+.hdr-btn{width:38px;height:38px;background:var(--warm);border:none;border-radius:12px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .1s}
+.hdr-btn:active{transform:scale(.92);background:var(--rose-lt)}
+.viewer-banner{background:linear-gradient(90deg,var(--rose),#ff6b94);color:#fff;text-align:center;padding:9px 16px;font-size:13px;font-weight:700;font-family:'Nunito',sans-serif}
+.upload-zone{margin:14px 16px 0;background:var(--white);border-radius:20px;padding:18px;box-shadow:0 4px 20px rgba(255,143,171,.1)}
+.upload-zone-title{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px}
+.upload-btns{display:flex;gap:10px}
+.upload-btn{flex:1;padding:14px 8px;border:2px dashed var(--rose-lt);border-radius:16px;background:var(--warm);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;color:var(--rose);transition:all .18s}
+.upload-btn:active{background:var(--rose-lt);border-color:var(--rose);transform:scale(.97)}
+.uicon{font-size:26px}
+.progress-wrap{margin-top:14px;display:none}
+.progress-track{height:8px;background:var(--rose-lt);border-radius:8px;overflow:hidden;margin-bottom:7px}
+.progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--rose),#ff6b94);border-radius:8px;transition:width .25s}
+.progress-label{font-size:12px;color:var(--muted);text-align:center}
+.gallery-hdr{padding:16px 20px 10px;display:flex;align-items:center;justify-content:space-between}
+.gallery-hdr-title{font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;color:var(--text)}
+.count-pill{background:var(--rose-lt);color:var(--rose);font-size:12px;font-weight:700;padding:3px 12px;border-radius:20px;font-family:'Nunito',sans-serif}
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:0 16px 32px}
+.grid-item{aspect-ratio:1;border-radius:14px;overflow:hidden;cursor:pointer;position:relative;background:var(--rose-lt);transition:transform .15s}
+.grid-item:active{transform:scale(.96)}
+.grid-item img,.grid-item video{width:100%;height:100%;object-fit:cover;display:block}
+.vid-tag{position:absolute;bottom:6px;right:6px;background:rgba(0,0,0,.55);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px;font-family:'Nunito',sans-serif}
+.skeleton-item{aspect-ratio:1;border-radius:14px;background:linear-gradient(90deg,var(--rose-lt) 25%,#ffc8d8 50%,var(--rose-lt) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite}
+@keyframes shimmer{to{background-position:-200% 0}}
+.empty-state{grid-column:1/-1;text-align:center;padding:50px 20px;color:var(--muted)}
+.empty-state .ei{font-size:56px;margin-bottom:12px}
+.empty-state h3{font-family:'Nunito',sans-serif;font-size:18px;font-weight:800;margin-bottom:6px;color:var(--rose)}
+.empty-state p{font-size:13px;line-height:1.6}
+#lightbox{display:none;position:fixed;inset:0;background:rgba(20,10,15,.96);z-index:9999;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+#lightbox.on{display:flex}
+.lb-close{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.15);border:none;color:#fff;width:44px;height:44px;border-radius:50%;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
+.lb-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);border:none;color:#fff;width:44px;height:64px;font-size:22px;cursor:pointer;display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px);border-radius:12px}
+#lb-prev{left:10px}#lb-next{right:10px}
+#lb-img,#lb-vid{max-width:90vw;max-height:76vh;border-radius:16px;object-fit:contain}
+.lb-counter{position:absolute;top:18px;left:18px;background:rgba(255,255,255,.15);color:#fff;font-size:13px;font-family:'Nunito',sans-serif;font-weight:700;padding:4px 12px;border-radius:20px;backdrop-filter:blur(8px)}
+.lb-info{margin-top:14px;color:rgba(255,255,255,.55);font-size:12px;font-family:'Nunito',sans-serif}
+#toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--text);color:#fff;padding:12px 24px;border-radius:30px;font-size:14px;font-family:'Nunito',sans-serif;font-weight:700;white-space:nowrap;z-index:99999;transition:transform .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 8px 24px rgba(0,0,0,.25)}
+#toast.show{transform:translateX(-50%) translateY(0)}
+input[type="file"]{display:none}
+</style>
+</head>
+<body>
+
+<div id="setup" class="screen">
+  <span class="setup-emoji">🍼</span>
+  <div class="setup-title">서안이 앨범</div>
+  <div class="setup-sub">가족 모두가 함께 보는 우리 아기 앨범 💕</div>
+  <div class="setup-card">
+    <div class="card-label">🔑 Firebase 설정</div>
+    <div class="field"><label>API Key</label><input id="f-apiKey" type="text" placeholder="AIzaSy..." autocomplete="off"></div>
+    <div class="field"><label>Project ID</label><input id="f-projectId" type="text" placeholder="seani-album"></div>
+    <div class="field"><label>Storage Bucket</label><input id="f-storageBucket" type="text" placeholder="seani-album.firebasestorage.app"></div>
+    <div class="field"><label>App ID</label><input id="f-appId" type="text" placeholder="1:000000:web:abc123"></div>
+    <button class="btn-go" onclick="saveAndStart()">앨범 시작하기 🚀</button>
+    <div class="setup-hint">📌 Firebase 콘솔 → 프로젝트 설정 → 앱 → SDK 설정에서 복사하세요</div>
+  </div>
+</div>
+
+<div id="app" class="screen">
+  <div id="viewer-banner" class="viewer-banner" style="display:none">👀 보기 전용 — 새 사진이 올라오면 자동으로 표시돼요!</div>
+  <div class="app-header">
+    <div class="hdr-left">
+      <span class="hdr-icon">🍼</span>
+      <div>
+        <div class="hdr-title">서안이 앨범</div>
+        <div class="hdr-sub" id="hdr-sub">불러오는 중...</div>
+      </div>
+    </div>
+    <div class="hdr-actions">
+      <button class="hdr-btn" onclick="copyShareLink()">📤</button>
+      <button class="hdr-btn" onclick="confirmReset()">⚙️</button>
+    </div>
+  </div>
+  <div id="upload-zone" class="upload-zone">
+    <div class="upload-zone-title">새 사진 추가</div>
+    <div class="upload-btns">
+      <label class="upload-btn" for="cam-input"><span class="uicon">📸</span>카메라로 찍기</label>
+      <label class="upload-btn" for="file-input"><span class="uicon">🖼️</span>갤러리에서 선택</label>
+    </div>
+    <div class="progress-wrap" id="prog-wrap">
+      <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
+      <div class="progress-label" id="prog-label">업로드 중...</div>
+    </div>
+  </div>
+  <input type="file" id="cam-input" accept="image/*,video/*" capture="environment">
+  <input type="file" id="file-input" accept="image/*,video/*" multiple>
+  <div class="gallery-hdr">
+    <div class="gallery-hdr-title">📷 소중한 추억들</div>
+    <div class="count-pill" id="count-pill">0장</div>
+  </div>
+  <div class="gallery-grid" id="gallery">
+    <div class="skeleton-item"></div><div class="skeleton-item"></div><div class="skeleton-item"></div>
+    <div class="skeleton-item"></div><div class="skeleton-item"></div><div class="skeleton-item"></div>
+  </div>
+</div>
+
+<div id="lightbox">
+  <div class="lb-counter" id="lb-counter">1 / 1</div>
+  <button class="lb-close" onclick="closeLb()">✕</button>
+  <button class="lb-nav" id="lb-prev" onclick="lbNav(-1)">‹</button>
+  <button class="lb-nav" id="lb-next" onclick="lbNav(1)">›</button>
+  <img id="lb-img" style="display:none">
+  <video id="lb-vid" controls style="display:none"></video>
+  <div class="lb-info" id="lb-info"></div>
+</div>
+<div id="toast"></div>
+
+<script>
+'use strict';
+let storage, items=[], lbIdx=0, isViewer=false;
+
+function checkMode(){ isViewer=new URLSearchParams(location.search).get('mode')==='view'; }
+function loadCfg(){ try{ return JSON.parse(localStorage.getItem('seoani_cfg')||'null'); }catch{ return null; } }
+
+function saveAndStart(){
+  const apiKey=document.getElementById('f-apiKey').value.trim();
+  const projectId=document.getElementById('f-projectId').value.trim();
+  const storageBucket=document.getElementById('f-storageBucket').value.trim();
+  const appId=document.getElementById('f-appId').value.trim();
+  if(!apiKey||!projectId||!storageBucket||!appId) return toast('⚠️ 모든 칸을 채워주세요!');
+  const cfg={apiKey,authDomain:`${projectId}.firebaseapp.com`,projectId,storageBucket,messagingSenderId:'000000000000',appId};
+  localStorage.setItem('seoani_cfg',JSON.stringify(cfg));
+  initFirebase(cfg);
+}
+
+function confirmReset(){ if(confirm('설정을 초기화할까요?')){ localStorage.removeItem('seoani_cfg'); location.reload(); } }
+
+function initFirebase(cfg){
+  try{
+    if(!firebase.apps.length) firebase.initializeApp(cfg);
+    storage=firebase.storage();
+    document.getElementById('setup').classList.remove('on');
+    document.getElementById('app').classList.add('on');
+    if(isViewer){
+      document.getElementById('upload-zone').style.display='none';
+      document.getElementById('viewer-banner').style.display='block';
+    } else {
+      document.getElementById('cam-input').addEventListener('change',handleFiles);
+      document.getElementById('file-input').addEventListener('change',handleFiles);
+    }
+    loadPhotos();
+    setInterval(loadPhotos, 15000);
+  } catch(e){ toast('❌ Firebase 오류: '+e.message); console.error(e); }
+}
+
+async function handleFiles(e){
+  const files=Array.from(e.target.files);
+  if(!files.length) return;
+  const wrap=document.getElementById('prog-wrap'),fill=document.getElementById('prog-fill'),label=document.getElementById('prog-label');
+  wrap.style.display='block';
+  for(let i=0;i<files.length;i++){
+    const file=files[i];
+    const isVideo=file.type.startsWith('video/');
+    const ext=file.name.split('.').pop()||(isVideo?'mp4':'jpg');
+    const path=`media/${Date.now()}_${isVideo?'v':'i'}_${Math.random().toString(36).slice(2,6)}.${ext}`;
+    label.textContent=`업로드 중... (${i+1}/${files.length})`;
+    fill.style.width='0%';
+    try{
+      const ref=storage.ref(path);
+      const task=ref.put(file);
+      await new Promise((res,rej)=>{ task.on('state_changed',s=>{ fill.style.width=((s.bytesTransferred/s.totalBytes)*100)+'%'; },rej,res); });
+    } catch(err){ toast('❌ 업로드 실패: '+err.message); }
+  }
+  wrap.style.display='none'; fill.style.width='0%'; e.target.value='';
+  toast('✅ 업로드 완료! 가족들이 바로 볼 수 있어요 💕');
+  loadPhotos();
+}
+
+async function loadPhotos(){
+  try{
+    const result=await storage.ref('media').listAll();
+    const refs=result.items.sort((a,b)=>b.name.localeCompare(a.name));
+    const resolved=await Promise.all(refs.map(async ref=>{
+      const url=await ref.getDownloadURL();
+      const isVideo=ref.name.includes('_v_');
+      return {name:ref.name,url,type:isVideo?'video':'image'};
+    }));
+    items=resolved;
+    render();
+  } catch(e){
+    console.error(e);
+    document.getElementById('gallery').innerHTML=`
+      <div class="empty-state">
+        <div class="ei">⚠️</div>
+        <h3>연결 오류</h3>
+        <p>Firebase Storage 보안 규칙을 확인해주세요<br><small style="font-size:10px">${e.message}</small></p>
+      </div>`;
+  }
+}
+
+function render(){
+  const grid=document.getElementById('gallery'),pill=document.getElementById('count-pill'),sub=document.getElementById('hdr-sub');
+  pill.textContent=`${items.length}장`;
+  if(!items.length){
+    sub.textContent='사진을 추가해보세요';
+    grid.innerHTML=`<div class="empty-state"><div class="ei">🍼</div><h3>아직 사진이 없어요</h3><p>위에서 사진을 찍거나 선택해보세요!</p></div>`;
+    return;
+  }
+  sub.textContent=`사진 ${items.length}장 · 15초마다 자동 업데이트`;
+  grid.innerHTML=items.map((it,i)=>{
+    if(it.type==='video') return `<div class="grid-item" onclick="openLb(${i})"><video src="${it.url}" preload="metadata" muted playsinline></video><div class="vid-tag">▶ 영상</div></div>`;
+    return `<div class="grid-item" onclick="openLb(${i})"><img src="${it.url}" loading="lazy" alt="서안이"></div>`;
+  }).join('');
+}
+
+function openLb(idx){ lbIdx=idx; updateLb(); document.getElementById('lightbox').classList.add('on'); }
+function closeLb(){ document.getElementById('lightbox').classList.remove('on'); const v=document.getElementById('lb-vid'); v.pause(); v.src=''; }
+function lbNav(dir){ lbIdx=(lbIdx+dir+items.length)%items.length; updateLb(); }
+function updateLb(){
+  const it=items[lbIdx],img=document.getElementById('lb-img'),vid=document.getElementById('lb-vid');
+  if(it.type==='video'){ img.style.display='none'; vid.style.display='block'; vid.src=it.url; }
+  else { vid.style.display='none'; vid.src=''; img.style.display='block'; img.src=it.url; }
+  document.getElementById('lb-counter').textContent=`${lbIdx+1} / ${items.length}`;
+  const show=items.length>1?'flex':'none';
+  document.getElementById('lb-prev').style.display=show;
+  document.getElementById('lb-next').style.display=show;
+}
+document.getElementById('lightbox').addEventListener('click',e=>{ if(e.target===document.getElementById('lightbox')) closeLb(); });
+
+function copyShareLink(){
+  const url=location.href.split('?')[0]+'?mode=view';
+  if(navigator.clipboard){ navigator.clipboard.writeText(url).then(()=>toast('📤 가족 공유 링크 복사! 카카오톡에 붙여넣기 하세요 💌')).catch(()=>prompt('링크 복사:',url)); }
+  else prompt('링크 복사:',url);
+}
+
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
+
+function loadScript(src){ return new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=rej; document.head.appendChild(s); }); }
+async function loadFirebaseSDK(){
+  const v='9.23.0';
+  const sets=[
+    [`https://www.gstatic.com/firebasejs/${v}/firebase-app-compat.js`,`https://www.gstatic.com/firebasejs/${v}/firebase-storage-compat.js`],
+    [`https://cdn.jsdelivr.net/npm/firebase@${v}/firebase-app-compat.min.js`,`https://cdn.jsdelivr.net/npm/firebase@${v}/firebase-storage-compat.min.js`]
+  ];
+  for(const urls of sets){ try{ for(const u of urls) await loadScript(u); return true; }catch(e){ console.warn('CDN 백업 시도',e); } }
+  return false;
+}
+
+(async()=>{
+  checkMode();
+  if(!await loadFirebaseSDK()){ alert('⚠️ 인터넷 연결을 확인해주세요.'); return; }
+  // Firebase 설정 미리 내장 — 가족들은 그냥 열면 바로 앨범 보여요!
+  initFirebase({
+    apiKey: "AIzaSyBRTPTQMx4V75O1pw72Tccii5J1SScrzEQ",
+    authDomain: "seani-album.firebaseapp.com",
+    projectId: "seani-album",
+    storageBucket: "seani-album.firebasestorage.app",
+    messagingSenderId: "1089100628714",
+    appId: "1:1089100628714:web:ed097061692e3b07328d93"
+  });
+})();
+</script>
+</body>
+</html>
